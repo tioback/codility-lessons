@@ -1,4 +1,7 @@
 # Codility Lessons
+
+[![CI](https://github.com/tioback/codility-lessons/actions/workflows/ci.yml/badge.svg)](https://github.com/tioback/codility-lessons/actions/workflows/ci.yml)
+
 I enjoy tackling problems that require algorithmic thinking. 
 
 I often supplement my learning on sites like [Codility](https://www.codility.com), [LeetCode](https://leetcode.com), [HackerRank](https://www.hackerrank.com), and [HackerEarth](https://www.hackerearth.com) to explore new ways to solve problems.
