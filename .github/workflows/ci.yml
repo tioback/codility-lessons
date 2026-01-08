@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+
+      - name: Cache Gradle and wrapper
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Determine changed modules
+        id: changes
+        run: |
+          # Ensure we have a reference to compare with (main)
+          git fetch origin main --depth=1 || true
+
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          echo "Changed files: $CHANGED_FILES"
+
+          # If important root/build files or commons changed, run everything
+          if echo "$CHANGED_FILES" | grep -qE '(^|/)(commons/)|(^|/)build.gradle.kts|(^|/)settings.gradle.kts|(^|/)gradle/|(^|/)gradlew'; then
+            echo "run_all=true" >> $GITHUB_OUTPUT
+          else
+            # Extract lessons changed: lessons/<topic>/<lesson>
+            MODULES=$(echo "$CHANGED_FILES" | grep -oE '^lessons/[^/]+/[^/]+' | sort -u | tr '\n' ' ')
+            echo "modules=$MODULES" >> $GITHUB_OUTPUT
+            echo "run_all=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run tests for changed modules
+        env:
+          MODULES: ${{ steps.changes.outputs.modules }}
+          RUN_ALL: ${{ steps.changes.outputs.run_all }}
+        run: |
+          set -euo pipefail
+
+          if [ "$RUN_ALL" = "true" ]; then
+            echo "Relevant root changes detected — running full build and tests"
+            ./gradlew test --no-daemon --stacktrace
+            exit 0
+          fi
+
+          if [ -z "${MODULES:-}" ]; then
+            echo "No lesson modules changed; nothing to test."
+            exit 0
+          fi
+
+          for m in $MODULES; do
+            GP=$(echo "$m" | sed 's|/|:|g')
+            echo "Running tests for module: $m -> :$GP"
+            ./gradlew ":$GP:test" --no-daemon --no-parallel --info
+          done
