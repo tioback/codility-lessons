@@ -16,9 +16,7 @@ Each lesson will consist of:
 5. What I learned — lessons and insights
 6. References
 
-I will always aim to credit any algorithms or sources I use. If I miss a citation, please let me know so I can correct it.
-
-If you find any code that belongs to you or someone else, please let me know so I can add a proper reference.
+I'll do my best to credit original authors for algorithms or ideas; apologies for any oversights and please open an issue or submit a PR so I can fix them and add the proper attribution.
 
 ## Contributing
 
