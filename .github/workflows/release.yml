@@ -25,18 +25,14 @@ jobs:
       - name: Build project
         run: ./gradlew build --no-daemon --no-parallel
 
-      - name: Package lessons
+      - name: Create combined lessons archive
         run: |
           set -euo pipefail
           mkdir -p build/lesson-packages
-          for d in lessons/*/*; do
-            if [ -d "$d" ]; then
-              lesson=$(basename "$d")
-              out="build/lesson-packages/${lesson}-${GITHUB_REF_NAME}.tar.gz"
-              echo "Packaging $d -> $out"
-              tar -czf "$out" -C "$d" .
-            fi
-          done
+          ARCHIVE="build/lesson-packages/lessons-${GITHUB_REF_NAME}.tar.gz"
+          echo "Creating combined archive: $ARCHIVE"
+          # Include the lessons directory contents (topics and lessons)
+          tar -czf "$ARCHIVE" -C lessons .
         shell: bash
 
       - name: Create GitHub release
@@ -47,24 +43,26 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           release_name: "Release ${{ github.ref_name }}"
-          body: "Automated lesson packages for ${{ github.ref_name }}"
+          body: "Automated combined lessons package for ${{ github.ref_name }}"
           draft: false
           prerelease: false
 
-      - name: Upload lesson packages to release
+      - name: Upload combined archive to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UPLOAD_URL: ${{ steps.create_release.outputs.upload_url }}
         run: |
           set -euo pipefail
-          for f in build/lesson-packages/*; do
-            if [ -f "$f" ]; then
-              name=$(basename "$f")
-              echo "Uploading $name to release"
-              curl -s -X POST \
-                -H "Authorization: token $GITHUB_TOKEN" \
-                -H "Content-Type: application/gzip" \
-                --data-binary @"$f" "$UPLOAD_URL?name=$name"
-            fi
-          done
+          f="build/lesson-packages/lessons-${GITHUB_REF_NAME}.tar.gz"
+          if [ -f "$f" ]; then
+            name=$(basename "$f")
+            echo "Uploading $name to release"
+            curl -s -X POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: application/gzip" \
+              --data-binary @"$f" "$UPLOAD_URL?name=$name"
+          else
+            echo "No combined archive found at $f"
+            exit 1
+          fi
         shell: bash
