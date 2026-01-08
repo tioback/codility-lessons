@@ -14,6 +14,7 @@
 # Java
 *.class
 *.jar
+!/gradle/wrapper/gradle-wrapper.jar
 *.war
 *.ear
 hs_err_pid*
@@ -21,6 +22,7 @@ hs_err_pid*
 # Build / package directories
 /target/
 /build/
+**/build/
 
 # Gradle
 .gradle/
