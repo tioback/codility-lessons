@@ -23,11 +23,33 @@ jobs:
           java-version: '25'
           cache: gradle
 
+      - name: Ensure Gradle cache directories exist
+        run: |
+          mkdir -p ~/.gradle/caches ~/.gradle/wrapper
+        shell: bash
+
+      - name: Run lightweight Gradle to populate wrapper and caches
+        run: |
+          echo "Gradle version:" && ./gradlew --version || true
+        shell: bash
+
+      - name: Debug Gradle home contents (for cache troubleshooting)
+        if: ${{ always() }}
+        run: |
+          echo "HOME=$HOME"
+          ls -la $HOME || true
+          ls -la $HOME/.gradle || true
+          ls -la $HOME/.gradle/caches || true
+          ls -la $HOME/.gradle/wrapper || true
+        shell: bash
+
       - name: Cache Gradle and wrapper
         uses: actions/cache@v4
         with:
           path: |
-            ~/.gradle/caches
+            ~/.gradle/caches/modules-2
+            ~/.gradle/caches/journal-1
+            ~/.gradle/wrapper/dists
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle/wrapper/gradle-wrapper.properties') }}
 
