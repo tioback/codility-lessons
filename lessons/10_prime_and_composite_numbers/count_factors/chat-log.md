@@ -151,7 +151,7 @@ ___
 
 Instead of incrementing $i$ by $1$ or $2$, you use a "wheel" to skip all multiples of $2$, $3$ and $5$. The outer loop only iterates through numbers not divisible by these small primes.
 
--   **Pros:** Reduces the number of outer loop iterations by roughly ${73\%}$ compared to incrementing by $1$. It avoids checking even numbers and multiples of $3$ and $5$ entirely.
+-   **Pros:** Reduces the number of outer loop iterations by roughly 73% compared to incrementing by $1$. It avoids checking even numbers and multiples of $3$ and $5$ entirely.
 -   **Cons:** Increased code complexity; requires a predefined array of offsets to increment $i$.
 
 ___
@@ -171,7 +171,7 @@ ___
 
 #### Alternative 3: Pre-computing Small Primes with a Bitset
 
-You can use a bitset where each bit represents only odd numbers (reducing space by ${50\%}$) and pre-mark multiples of the first few primes (like $3$, $5$, $7$) using a pattern before the loop starts.
+You can use a bitset where each bit represents only odd numbers (reducing space by 50%) and pre-mark multiples of the first few primes (like $3$, $5$, $7$) using a pattern before the loop starts.
 
 -   **Pros:** Reduces the number of times the inner loop runs because many bits are "pre-cleared."
 -   **Cons:** Higher memory efficiency, but the outer loop still nominally checks values up to ${\sqrt{N}}$ unless combined with a wheel.
