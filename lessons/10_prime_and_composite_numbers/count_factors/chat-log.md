@@ -891,4 +891,4 @@ Since your function is stateless, you should implement it like this:
 2.  Run the sieve up to `limit`.
 3.  Use those primes to find the factors.
 
-This ensures that for any ${N \lt {2\\,147\\,483\\,647}}$
+This ensures that for any ${N \lt {2\\,147\\,483\\,647}}$, you only do the minimum amount of work required for that specific number.
