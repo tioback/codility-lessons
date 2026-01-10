@@ -160,11 +160,7 @@ ___
 
 Instead of iterating to ${\sqrt{N}}$ on the full range, you divide the range ${[1,N]}$ into smaller segments (blocks) that fit into the CPU L1/L2 cache.
 
--   **Pros:** Dramatically improves performance on modern hardware by reducing cache misses. It allows for calculating primes in very large ranges where
-    
-    Ncap N
-    
-    exceeds available RAM.
+-   **Pros:** Dramatically improves performance on modern hardware by reducing cache misses. It allows for calculating primes in very large ranges where $N$ exceeds available RAM.
 -   **Cons:** Does not technically change the mathematical stopping point of $N$, but reduces the _active_ iterations per segment and manages memory better.
 
 ___
@@ -182,7 +178,7 @@ ___
 
 |Method|Iteration Count|Complexity|Memory Usage|
 |---|---|---|---|
-|** ${i \leq \sqrt{N}}$ **|Standard|Very Low|High (full array)|
+|**${i \leq \sqrt{N}}$**|Standard|Very Low|High (full array)|
 |**Wheel Factorization**|Much Lower|Moderate|High (full array)|
 |**Segmented Sieve**|Similar|High|**Very Low**|
 |**Bitset / Pre-mark**|Standard|Low|**Low**|
@@ -358,11 +354,9 @@ ___
 
     |Implementation|Cache Target|Best For|Segment Size (Typical)|
     |---|---|---|---|
-    |**L1 Optimized**|L1 Data (32KB)|Extreme speed, small
-    Ncap N|~32,000 bits|
+    |**L1 Optimized**|L1 Data (32KB)|Extreme speed, small $N$|~32,000 bits|
     |**L2 Optimized**|L2 Cache (256KB)|**General Best Performance**|~262,144 bytes|
-    |**Bit-Packed**|L1/L2|Memory-constrained systems|N/8cap N / 8
-    bytes per segment|
+    |**Bit-Packed**|L1/L2|Memory-constrained systems| ${N/8}$ bytes per segment|
 
 ### User Prompt 7
 
